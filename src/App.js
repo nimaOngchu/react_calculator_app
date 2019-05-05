@@ -81,19 +81,30 @@ export class App extends Component {
         output: this.state.output.slice(0, -1)
       })
     }
+
+  }
+  componentDidMount() {
+    this.state.data.map((item) => {
+      if (item.operator) {
+        document.getElementById(item.value).className = 'items operators';
+
+      }
+      return null;
+    }
+
+    )
   }
 
   render() {
     return (
       <div className="App">
-      <div className="container">
-        <div className="output">
+        <div className="container">
+        <span>Nima's calculator</span>
+          <div className="output">
+
             <span className='output_numbers' >{this.state.output}</span>
-            <span style={{
-              display: 'block',
-              padding: '5px',
-              marginTop: '25px'
-            }}>{this.state.total}</span>
+            <span className ="output_total" >
+            {this.state.total}</span>
         </div>
           < Buttons data={this.state.data} onButtonClick={this.onButtonClick.bind(this)}/>
       </div>
