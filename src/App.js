@@ -27,11 +27,11 @@ export class App extends Component {
       { value: "=", operator: true }
     ],
     total: "0",
-    output: "0"
+    output: ""
   };
   onReset() {
     this.setState({
-      output: "0",
+      output: "",
       total:'0'
     });
   }
@@ -55,12 +55,18 @@ export class App extends Component {
       })
     }
 
-  addTodisplay(input) {
+  addTodisplay(input, operator) {
     console.log('backspace passed inside adddisplay')
-    if (this.state.output.length === 1 && this.state.output === '0') {
+    if (this.state.output.length< 1) {  if (operator && input !== '-') {
+        this.setState({
+          output:'0'
+        })
+    }
+    else if(this.state.output === ''){
       this.setState({
         output:input
       })
+      }
 
     }else
         this.setState({
@@ -80,8 +86,11 @@ export class App extends Component {
       return data.value === lastCharacter;
     })
 
+    if(this.state.output.length>1){
     const lasCharacterArray = this.state.data[indexOfLastChar];
-    return lasCharacterArray.operator
+      return lasCharacterArray.operator
+    }
+    else return false
   }
   onButtonClicked(id, operator) {
 
@@ -108,8 +117,8 @@ export class App extends Component {
         }
         else
 
-          this.addTodisplay(id)
-        
+          this.addTodisplay(id, operator)
+
     }
   }
   componentDidMount() {
