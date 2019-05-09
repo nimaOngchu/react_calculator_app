@@ -27,51 +27,90 @@ export class App extends Component {
       { value: "=", operator: true }
     ],
     total: "0",
-    output: ""
+    output: "0"
   };
-  onButtonON() {
+  onReset() {
     this.setState({
-      output: "",
+      output: "0",
       total:'0'
     });
   }
-
-  calculate = (id, operator) => {
-    const notempty = this.state.output.length > 0;
-    if (id === "=") {
-      this.setState({
-        total:'= '+ math.eval(this.state.output)
-
-      });
-      console.log('calculating')
-    }
-  };
-  onButtonClick(id, operator) {
-    let space = "";
-    let input = id;
-    if (id === 'X') {
-      input = '*';
-    }
-
-    if (operator) {
-      space = " ";
-      if (id === '=')
-        input =''
-    }
+  onBackspace() {
+    console.log('backspace is about to change output')
     this.setState({
-      output: this.state.output + space + input + space
+      output: this.state.output.slice(0, -1)
     });
-    if (id === "ON") {
-      this.onButtonON();
-    }
-    if (id === "BACK") {
-      console.log(this.state.output)
+    console.log('backspace has changed output')
+
+  }
+
+  calculate = () => {
+    if (this.lastCharIsOperator()) {
       this.setState({
-        output: this.state.output.slice(0, -1)
-      });
-      console.log(this.state.output)
+        total: '= ' + math.eval(this.state.output.substr(0,this.state.output.length -1))
+      })
+    }else
+      this.setState({
+        total: '= ' + math.eval(this.state.output)
+      })
     }
-    this.calculate(id, operator);
+
+  addTodisplay(input) {
+    console.log('backspace passed inside adddisplay')
+    if (this.state.output.length === 1 && this.state.output === '0') {
+      this.setState({
+        output:input
+      })
+
+    }else
+        this.setState({
+      output: this.state.output +  input
+    });
+
+  }
+  lastCharIsOperator() {
+
+    const lenghtOfOtput = this.state.output.length;
+    let lastCharacter = this.state.output.charAt(lenghtOfOtput - 1);
+    const indexOfLastChar = this.state.data.findIndex((data) =>
+    {
+      if (lastCharacter === '*') {
+        lastCharacter = 'X';
+      }
+      return data.value === lastCharacter;
+    })
+
+    const lasCharacterArray = this.state.data[indexOfLastChar];
+    return lasCharacterArray.operator
+  }
+  onButtonClicked(id, operator) {
+
+    if (id === 'X') {
+      id = '*';
+    }
+
+    switch (id) {
+      case '=':
+        this.calculate();
+        break;
+      case 'ON':
+        this.onReset();
+        break;
+      case 'BACK':
+        this.onBackspace();
+        break;
+      default:
+
+        if (operator && this.lastCharIsOperator()) {
+         this.setState({
+             output: this.state.output.slice(0, -1)+ id
+         })
+        }
+        else
+
+          this.addTodisplay(id)
+        
+    }
   }
   componentDidMount() {
     this.state.data.map(item => {
@@ -93,7 +132,7 @@ export class App extends Component {
           </div>
           <Buttons
             data={this.state.data}
-            onButtonClick={this.onButtonClick.bind(this)}
+            onButtonClick={this.onButtonClicked.bind(this)}
           />
         </div>
       </div>
